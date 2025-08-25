@@ -1,11 +1,13 @@
-#
+#data and output
 data/
 output/
+!output/*.sh
 
 #macOS
 .DS_Store
 
 #R/RStudio
+.RData
 .Rhistory
-.RDataTmp
+.RDataTmp*
 .Rproj.user/
