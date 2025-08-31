@@ -23,7 +23,7 @@ get_this_script_path <- function() {
 }
 
 # --- Settings ---
-visualize_target <- "mult"
+visualize_target <- "sdm"
 # ----------------
 
 # --- Path Settings ---

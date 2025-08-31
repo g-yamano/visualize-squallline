@@ -7,30 +7,20 @@
 # load packages
 library(ncdf4)
 library(fields)
+source("../../config.R")
 
 #######################################################
 #################### Setting items ####################
 #######################################################
-# 1.Specify the netcdf file path
-input_file_path <- file.path("../../data/SDM", "merged-h_history.pe000000.nc")
-output_dir <- "../../output/LWP+IWP_XY/SDM"
-# 2. Specify the output pdf file size
-pdf_width <- 10
-pdf_height <- 10
-# 3. TRUE -> output all time fig, FALSE -> output only last time fig
-output_alltime <- FALSE
-
-# --- ここからが修正部分 ---
-# 4. Specify the custom color palette and breaks
-custom_colors <- c("#FFFFFF", "#E0E0FF", "#C0C0FF", "#8080FF", "#0000FF", 
-                   "#0080FF", "#00C0FF", "#00E0E0", "#80FFA0", "#C0FF80", "#E0FF80")
-#custom_breaks <- c(0, 0.5, 1, 2, 4, 6, 8, 10, 12, 14, 16, 18)
-
+#  Specify the custom color palette and breaks
+custom_colors <- c("#FFFFFF", "#E0E0FF", "#C0C0FF", "#8080FF", "#0000FF",
+                   "#0080FF", "#00C0FF", "#00E0E0", "#80FFA0", "#C0FF80",
+                   "#E0FF80")
 
 ############################################################
 #################### Processing Part #######################
 ############################################################
-ncin <- nc_open(input_file_path)
+ncin <- nc_open(input_file)
 alltimes <- ncvar_get(ncin, "time")
 x <- ncvar_get(ncin, "x")
 y <- ncvar_get(ncin, "y")

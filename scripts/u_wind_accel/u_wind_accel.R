@@ -7,26 +7,19 @@
 # load packages
 library(ncdf4)
 library(fields)
+source("../../config.R")
 
 #######################################################
 #################### Setting items ####################
 #######################################################
-# 1.Specify the netcdf file path
-input_file_path <- file.path("../../data/", "merged-h_history.pe000000.nc")
-output_dir <- "../../output/U_wind_accelaration/pdf"
-# 2. Specify the color palette
+# Specify the color palette
 CNVG_dU_palette <- colorRampPalette(c("white", "red", 
                                    "yellow"))(500)
-# 3. Specify the output pdf file size
-pdf_width <- 10
-pdf_height <- 5
-# 4 TRUE -> output all time fig, FALSE -> output only first time fig
-output_alltime <- FALSE
 
 ############################################################
 #################### Processing Part #######################
 ############################################################
-ncin <- nc_open(input_file_path)
+ncin <- nc_open(input_file)
 alltimes <- ncvar_get(ncin, "time")
 x <- ncvar_get(ncin, "x")
 y <- ncvar_get(ncin, "y")
