@@ -50,6 +50,7 @@ plot_twp_slice <- function(time_val, twp_slice) {
                      col = custom_colors,
                      #breaks = custom_breaks,
                      main = paste("Total Water Path (LWP+IWP) (Time =", time_val, "s)"),
+		     zlim = c(0.5,16),
                      xlab = "X [km]", ylab = "Y [km]", xaxt = "n", yaxt = "n", asp=1)
   x_ticks <- pretty(range(x_km), n = 10); axis(side = 1, at = x_ticks, labels = sprintf("%.1f", x_ticks))
   y_ticks <- pretty(range(y_km), n = 8); axis(side = 2, at = y_ticks, labels = sprintf("%.1f", y_ticks), las = 1)

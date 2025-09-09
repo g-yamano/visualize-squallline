@@ -48,7 +48,8 @@ input_file <- file.path(data_dir, "merged-h_history.pe000000.nc")
 
 input_files <- c(
   "tomita08" = "../../data/tomita08/merged-h_history.pe000000.nc",
-  #"suzuki10" = "../../data/suzuki10/merged-h_history.pe000000.nc",
+  "suzuki10_0-3h" = "../../data/suzuki10_0-3h/merged-h_history.pe000000.nc",
+  "suzuki10_3-6h" = "../../data/suzuki10_3-6h/restart_history_corrected.nc",
   "sdm" = "../../data/sdm/merged-h_history.pe000000.nc"
 )
 #input_files <- c(
@@ -56,11 +57,11 @@ input_files <- c(
 #  "sdm" = file.path(project_root, "data/sdm/merged-h_history.pe000000.nc")
 #)
 
-plot_colors <- c("#0072B2", "#009E73", "#EECC66")
+plot_colors <- c("#0072B2", "#EECC66", "#EECC66", "#009E73")
 
 # --- Plot Settings ---
 pdf_width    <- 10
 pdf_height   <- 5
 
 # --- Processing Settings ---
-output_alltime <- FALSE
+output_alltime <- TRUE
