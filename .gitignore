@@ -2,6 +2,7 @@
 data/*
 output/*
 !output/.gitkeep
+!data/.gitkeep
 
 #macOS
 .DS_Store
