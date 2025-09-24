@@ -81,7 +81,7 @@ legend("topleft",
 )
 
 y_ticks <- pretty(y_range, n = 10)
-axis(side = 2, at = y_ticks, las = 1)
+axis(side = 2, at = y_ticks, labels = formatC(y_ticks, format = "e", digits = 1), las = 1)
 grid()
 
 dev.off()

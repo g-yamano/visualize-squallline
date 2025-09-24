@@ -64,4 +64,4 @@ pdf_width    <- 10
 pdf_height   <- 5
 
 # --- Processing Settings ---
-output_alltime <- TRUE
+output_alltime <- FALSE

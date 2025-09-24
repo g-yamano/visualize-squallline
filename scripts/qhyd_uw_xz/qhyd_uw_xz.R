@@ -33,7 +33,7 @@ nc_close(ncin)
 
 # Data processing
 QHYD_min <- 0
-QHYD_max <- max(QHYD, na.rm=TRUE) * 1000 # g/kgに変換
+QHYD_max <- max(QHYD, na.rm=TRUE)
 dimnames(QHYD)[[4]] <- alltimes
 dimnames(U)[[4]] <- alltimes
 dimnames(W)[[4]] <- alltimes
@@ -45,14 +45,14 @@ z_km <- z * 10^(-3)
 plot_QHYD_slice <- function(time_val, QHYD_slice, U_slice, W_slice, x_start_mat, z_start_mat, x_indices, z_indices) {
   
   base_filename <- paste("QHYD_UW_XZ.", sprintf("%05d", as.numeric(time_val)), ".pdf", sep = "")
-  pdf_filename <- file.path(output_dir, base_filename) # 修正点2
+  pdf_filename <- file.path(output_dir, base_filename)
   
   pdf(pdf_filename, width = pdf_width, height = pdf_height)
   
   # plot contour
   fields::image.plot(x_km, z_km, QHYD_slice * 1000,
                      col = QHYD_palette,
-                     zlim = c(QHYD_min, QHYD_max),
+                     zlim = c(-2, 3),
                      main = paste("QHYD U&W (Time =", time_val, "s)"),
                      xlab = "X [km]",
                      ylab = "Z [km]", 

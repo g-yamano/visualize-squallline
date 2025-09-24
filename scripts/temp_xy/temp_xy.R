@@ -17,7 +17,7 @@ temp_palette <- colorRampPalette(c("purple", "blue", "darkgreen",
                                    "green", "white", "yellow", 
                                    "orange", "red"))(500)
 # --- 追加: 可視化したい高度を指定 [km] ---
-target_z_km <- 3.0 
+#target_z_km <- 1.0 
 
 ############################################################
 #################### Processing Part #######################
@@ -41,7 +41,8 @@ y_km <- y * 10^(-3) # Y座標をkmに変換
 z_km <- z * 10^(-3) 
 
 # --- 追加: 指定した高度に最も近いZのインデックスを見つける ---
-center_z_index <- which.min(abs(z_km - target_z_km))
+#center_z_index <- which.min(abs(z_km - target_z_km))
+center_z_index <- 1
 
 # make plot function
 plot_temperature_slice <- function(time_val, slice_data) {
@@ -54,7 +55,7 @@ plot_temperature_slice <- function(time_val, slice_data) {
   # --- 変更点: X-Y平面を描画 ---
   fields::image.plot(x_km, y_km, slice_data,
         col = temp_palette,
-        zlim = c(temp_min, temp_max),
+        zlim = c(16, 20.5),
         main = paste("Temperature at Z =", z_km[center_z_index], "km (Time =", time_val, "s)"),
         xlab = "X [km]",
         ylab = "Y [km]", # Y軸ラベルを変更
