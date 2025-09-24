@@ -6,6 +6,7 @@ output/*
 
 #macOS
 .DS_Store
+._*
 
 #R/RStudio
 .RData
