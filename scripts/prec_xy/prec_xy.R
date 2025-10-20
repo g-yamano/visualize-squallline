@@ -39,7 +39,7 @@ y_km <- y * 10^(-3)
 # make plot function
 plot_PREC_slice <- function(time_val, slice_data) {
   
-  base_filename <- paste("PREC_XZ.", sprintf("%05d", as.numeric(time_val)), ".pdf", sep = "")
+  base_filename <- paste("PREC_XY.", sprintf("%05d", as.numeric(time_val)), ".pdf", sep = "")
   pdf_filename <- file.path(output_dir, base_filename)
   
   pdf(pdf_filename, width = pdf_width, height = pdf_height)

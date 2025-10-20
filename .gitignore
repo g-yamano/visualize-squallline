@@ -1,13 +1,18 @@
 #data and output
-data/
-output/
-!output/*.sh
+data/*
+output/*
+!output/.gitkeep
+!data/.gitkeep
 
 #macOS
 .DS_Store
+._*
 
 #R/RStudio
 .RData
 .Rhistory
 .RDataTmp*
 .Rproj.user/
+
+#util
+util/util_sno/*.sh
