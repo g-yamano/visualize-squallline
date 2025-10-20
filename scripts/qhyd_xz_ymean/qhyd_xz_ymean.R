@@ -26,6 +26,7 @@ x <- ncvar_get(ncin, "x")
 y <- ncvar_get(ncin, "y")
 z <- ncvar_get(ncin, "z")
 QHYD_4D <- ncvar_get(ncin, "QHYD", collapse_degen = FALSE)
+QHYD_4D <- QHYD_4D * 1000
 nc_close(ncin)
 
 # Data processing
@@ -51,7 +52,10 @@ plot_QHYD_slice <- function(time_val, slice_data) {
   # plot contour
   fields::image.plot(x_km, z_km, slice_data,
                      col = QHYD_palette,
-                     zlim = c(QHYD_min, QHYD_max),
+                     #zlim = c(QHYD_min, QHYD_max),
+                     zlim = c(0.1, 4.0),
+		     xlim = c(120, 540),
+		     ylim = c(0, 15),
                      main = paste("Y-averaged Total Hydrometeors (Time =", time_val, "s)"),
                      xlab = "X [km]",
                      ylab = "Z [km]", 
