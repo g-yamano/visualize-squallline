@@ -17,6 +17,10 @@ SNC_palette <- colorRampPalette(c("white", "blue",
                                    "green", "yellow", 
                                    "orange", "red"))(500)
 
+# Chunk size (number of time steps to process in one batch)
+# Smaller values reduce memory footprint; increase for speed.
+chunk_size <- 10
+
 ############################################################
 #################### Processing Part #######################
 ############################################################
@@ -25,17 +29,46 @@ alltimes <- ncvar_get(ncin, "time")
 x <- ncvar_get(ncin, "x")
 y <- ncvar_get(ncin, "y")
 z <- ncvar_get(ncin, "z")
-center_y_index <- as.integer(length(y) / 2)
-SNC <- ncvar_get(ncin, "SNC", collapse_degen = FALSE)
-nc_close(ncin)
 
-# Data processing
-SNC_min <- min(SNC)
-SNC_max <- max(SNC)
-dimnames(SNC)[[4]] <- alltimes
+# pick center y-index (1-based)
+center_y_index <- max(1L, as.integer(length(y) / 2))
 
-x_km <- x * 10^(-3)
-z_km <- z * 10^(-3) 
+# axes for plotting (km)
+x_km <- x * 1e-3
+z_km <- z * 1e-3
+
+# Which time indices to process
+time_idx_vec <- if (isTRUE(output_alltime)) seq_along(alltimes) else length(alltimes)
+
+# Pass 1: determine global color scale across requested times by streaming slices
+SNC_min <- Inf
+SNC_max <- -Inf
+
+nx <- length(x)
+nz <- length(z)
+
+for (ti in time_idx_vec) {
+  # Read one time-slice at center Y: result is matrix [nx, nz]
+  slice <- ncvar_get(
+    ncin, "SNC",
+    start = c(1, center_y_index, 1, ti),
+    count = c(nx, 1, nz, 1),
+    collapse_degen = TRUE
+  )
+  # Update global min/max (ignore NA/Inf)
+  if (!is.null(slice)) {
+    smin <- suppressWarnings(min(slice, na.rm = TRUE))
+    smax <- suppressWarnings(max(slice, na.rm = TRUE))
+    if (is.finite(smin)) SNC_min <- min(SNC_min, smin)
+    if (is.finite(smax)) SNC_max <- max(SNC_max, smax)
+  }
+}
+
+# Safety: if data are all NA, fall back to [0,1]
+if (!is.finite(SNC_min) || !is.finite(SNC_max) || SNC_min == SNC_max) {
+  SNC_min <- 0
+  SNC_max <- 1
+}
 
 # make plot function
 plot_SNC_slice <- function(time_val, slice_data) {
@@ -69,17 +102,26 @@ plot_SNC_slice <- function(time_val, slice_data) {
 # plot processing
 dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
 
-if (output_alltime) {
-  for (time in alltimes) {
-    cat(sprintf("processing time = %s [s]\n", time))
-    SNC_slice <- SNC[, center_y_index, , as.character(time)]
-    plot_SNC_slice(time_val = time, slice_data = SNC_slice)
+# Pass 2: read-and-plot in chunks
+total <- length(time_idx_vec)
+if (total > 0) {
+  for (i in seq(1, total, by = chunk_size)) {
+    idx_range <- i:min(i + chunk_size - 1, total)
+    for (k in idx_range) {
+      ti <- time_idx_vec[k]
+      tval <- alltimes[ti]
+      cat(sprintf("processing time = %s [s]\n", tval))
+      slice <- ncvar_get(
+        ncin, "SNC",
+        start = c(1, center_y_index, 1, ti),
+        count = c(nx, 1, nz, 1),
+        collapse_degen = TRUE
+      )
+      plot_SNC_slice(time_val = tval, slice_data = slice)
+    }
   }
-} else {
-  last_time <- tail(alltimes, 1)
-  cat(sprintf("processing last time = %s [s]\n", last_time))
-  SNC_slice <- SNC[, center_y_index, , as.character(last_time)]
-  plot_SNC_slice(time_val = last_time, slice_data = SNC_slice)
 }
 
-cat(paste("All plots saved in '", output_dir, "' directory.\n", sep=""))
+nc_close(ncin)
+
+cat(paste("All plots saved in '", output_dir, "' directory.\n", sep = ""))
