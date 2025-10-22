@@ -1,7 +1,7 @@
 ###################################################
-# Title: visualize Y-averaged QHYD Rscript 
+# Title: visualize Y-sum QHYD Rscript 
 # Author: Gaku YAMANO
-# Date: 2025/08/23
+# Date: 2025/10/20
 ###################################################
 
 # load packages
@@ -30,8 +30,8 @@ nc_close(ncin)
 
 # Data processing
 # --- Calculate Y-averaged QHYD ---
-# The second dimension (margin=2) is the Y-axis. Calculate the mean along this axis.
-QHYD <- apply(QHYD_4D, c(1, 3, 4), mean, na.rm = TRUE)
+# The second dimension (margin=2) is the Y-axis. Calculate the sum along this axis.
+QHYD <- apply(QHYD_4D, c(1, 3, 4), sum, na.rm = TRUE)
 
 QHYD_min <- min(QHYD, na.rm = TRUE)
 QHYD_max <- max(QHYD, na.rm = TRUE)
@@ -43,7 +43,7 @@ z_km <- z * 10^(-3)
 # make plot function
 plot_QHYD_slice <- function(time_val, slice_data) {
   
-  base_filename <- paste("QHYD_XZ_ymean.", sprintf("%05d", as.numeric(time_val)), ".pdf", sep = "")
+  base_filename <- paste("QHYD_XZ_ysum.", sprintf("%05d", as.numeric(time_val)), ".pdf", sep = "")
   pdf_filename <- file.path(output_dir, base_filename)
   
   pdf(pdf_filename, width = pdf_width, height = pdf_height)
@@ -51,7 +51,8 @@ plot_QHYD_slice <- function(time_val, slice_data) {
   # plot contour
   fields::image.plot(x_km, z_km, slice_data,
                      col = QHYD_palette,
-                     zlim = c(QHYD_min, QHYD_max),
+                     #zlim = c(QHYD_min, QHYD_max),
+                     zlim = c(0.1, 4.0),
                      main = paste("Y-averaged Total Hydrometeors (Time =", time_val, "s)"),
                      xlab = "X [km]",
                      ylab = "Z [km]", 

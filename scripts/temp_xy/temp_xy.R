@@ -55,7 +55,9 @@ plot_temperature_slice <- function(time_val, slice_data) {
   # --- 変更点: X-Y平面を描画 ---
   fields::image.plot(x_km, y_km, slice_data,
         col = temp_palette,
-        zlim = c(16, 20.5),
+	xlim = c(120, 480),
+	ylim = c(0,120),
+        zlim = c(16.0, 20.5),
         main = paste("Temperature at Z =", z_km[center_z_index], "km (Time =", time_val, "s)"),
         xlab = "X [km]",
         ylab = "Y [km]", # Y軸ラベルを変更
@@ -82,14 +84,18 @@ if (output_alltime) {
     cat(sprintf("processing time = %s [s]\n", time))
     # --- 変更点: Z次元を固定してX-Y断面を切り出す ---
     temp_slice <- Tem_C[, , center_z_index, as.character(time)]
-    plot_temperature_slice(time_val = time, slice_data = temp_slice)
+    temp_slice_clipped <- temp_slice
+    temp_slice_clipped[temp_slice > 20.5] <- 20.5
+    plot_temperature_slice(time_val = time, slice_data = temp_slice_clipped)
   }
 } else {
   last_time <- tail(alltimes, 1)
   cat(sprintf("processing last time = %s [s]\n", last_time))
   # --- 変更点: Z次元を固定してX-Y断面を切り出す ---
   temp_slice <- Tem_C[, , center_z_index, as.character(last_time)]
-  plot_temperature_slice(time_val = last_time, slice_data = temp_slice)
+  temp_slice_clipped <- temp_slice
+  temp_slice_clipped[temp_slice > 20.5] <- 20.5
+  plot_temperature_slice(time_val = last_time, slice_data = temp_slice_clipped)
 }
 
 cat(paste("All plots saved in '", output_dir, "' directory.\n", sep=""))
