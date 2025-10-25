@@ -21,6 +21,9 @@ SNC_palette <- colorRampPalette(c("white", "blue",
 # Smaller values reduce memory footprint; increase for speed.
 chunk_size <- 10
 
+# Scale factor for SNC values
+snc_scale <- 2.5 * 10^8
+
 ############################################################
 #################### Processing Part #######################
 ############################################################
@@ -41,8 +44,8 @@ z_km <- z * 1e-3
 time_idx_vec <- if (isTRUE(output_alltime)) seq_along(alltimes) else length(alltimes)
 
 # Pass 1: determine global color scale across requested times by streaming slices
-SNC_min <- Inf
-SNC_max <- -Inf
+SNC_min <- 0
+SNC_max <- 256
 
 nx <- length(x)
 nz <- length(z)
@@ -55,6 +58,8 @@ for (ti in time_idx_vec) {
     count = c(nx, 1, nz, 1),
     collapse_degen = TRUE
   )
+  # Apply scaling
+  slice <- slice * snc_scale
   # Update global min/max (ignore NA/Inf)
   if (!is.null(slice)) {
     smin <- suppressWarnings(min(slice, na.rm = TRUE))
@@ -81,7 +86,9 @@ plot_SNC_slice <- function(time_val, slice_data) {
   # plot contour
   fields::image.plot(x_km, z_km, slice_data,
         col = SNC_palette,
-        zlim = c(SNC_min, SNC_max),
+        ylim = c(0,15.0),
+        #zlim = c(SNC_min, SNC_max),
+        zlim = c(0, 256),
         main = paste("Super-droplets number concentration (Time =", time_val, "s)"),
         xlab = "X [km]",
         ylab = "Z [km]", 
@@ -117,6 +124,8 @@ if (total > 0) {
         count = c(nx, 1, nz, 1),
         collapse_degen = TRUE
       )
+      # Apply scaling
+      slice <- slice * snc_scale
       plot_SNC_slice(time_val = tval, slice_data = slice)
     }
   }
